@@ -1,4 +1,4 @@
-package com.example.paybite
+package com.app.paybite
 
 import io.flutter.embedding.android.FlutterActivity
 

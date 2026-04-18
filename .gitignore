@@ -41,3 +41,48 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+#Configurations
+/firebase_options.dart
+
+# Firebase & Google Services (contains sensitive credentials)
+google-services.json
+google-services*.json
+/android/app/google-services.json
+
+# Android local settings
+/android/local.properties
+local.properties
+
+# Keystore files (signing keys)
+*.jks
+*.keystore
+*.key
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Android build outputs
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+/android/.gradle/
+/android/gradle/
+
+# iOS build outputs
+/ios/Pods/
+/ios/.symlinks/
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+
+# Gradle cache
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Generated files
+/lib/generated_plugin_registrant.dart
+.flutter_plugins
+.flutter_plugins_dependencies
