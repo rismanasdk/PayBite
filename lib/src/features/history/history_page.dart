@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../models/order.dart' as order_model;
 import '../../services/firebase_service.dart';
@@ -20,8 +21,27 @@ class HistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final firebaseService = FirebaseService();
-    // TODO: Get userId dari Firebase Auth
-    const userId = 'user123';
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Riwayat Pesanan'),
+          centerTitle: true,
+          elevation: 0,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.lock, size: 48, color: Colors.grey[300]),
+              const SizedBox(height: 16),
+              const Text('Silakan login terlebih dahulu'),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(

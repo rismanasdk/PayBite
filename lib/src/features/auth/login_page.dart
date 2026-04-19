@@ -21,8 +21,8 @@ class _LoginPageState extends State<LoginPage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.blue[300]!,
-              Colors.blue[700]!,
+              Colors.orange[700]!,
+              const Color.fromARGB(255, 255, 167, 38),
             ],
           ),
         ),
@@ -47,13 +47,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Aplikasi Pembayaran Mudah',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                  ),
-                ),
                 const SizedBox(height: 48),
                 _isLoading
                     ? const Center(
@@ -63,31 +56,38 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       )
                     : SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton.icon(
-                          onPressed: _signInWithGoogle,
-                          icon: Image.asset(
-                            'assets/google_logo.png',
-                            width: 24,
-                            height: 24,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.login);
-                            },
-                          ),
-                          label: const Text(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _signInWithGoogle,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'lib/src/assets/logo-google.webp',
+                          width: 45, 
+                          height: 45,
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Text(
                             'Login dengan Google',
+                            textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 16),
                           ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.blue[700],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
                         ),
-                      ),
+                        const SizedBox(width: 40), // biar text tetap center
+                      ],
+                    ),
+                  ),
+                )
               ],
             ),
           ),

@@ -24,7 +24,7 @@ class ProductList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.error, size: 48, color: Colors.red),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 Text('Error: ${snapshot.error}'),
               ],
             ),
@@ -56,7 +56,7 @@ class ProductList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.85,
+            childAspectRatio: 0.65,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
           ),

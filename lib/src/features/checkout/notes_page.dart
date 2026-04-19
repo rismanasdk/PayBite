@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
 import '../../models/order.dart' as order_model;
@@ -33,9 +34,11 @@ class _NotesPageState extends State<NotesPage> {
 
     try {
       final firebaseService = FirebaseService();
+      final userId = FirebaseAuth.instance.currentUser?.uid;
 
-      // TODO: Get userId dari Firebase Auth (sementara gunakan hardcoded)
-      const userId = 'user123';
+      if (userId == null) {
+        throw Exception('Silakan login terlebih dahulu');
+      }
 
       // Convert cart items ke OrderItems
       final orderItems = widget.cartItems.map((item) {
@@ -64,12 +67,20 @@ class _NotesPageState extends State<NotesPage> {
       if (orderId != null) {
         // Update product stock
         for (var item in widget.cartItems) {
-          final product =
-              await firebaseService.getProduct(item['id'] as String);
-          if (product != null) {
-            final newStock = product.stock - (item['quantity'] as int? ?? 1);
-            await firebaseService.updateProductStock(
-                item['id'] as String, newStock);
+          try {
+            final product =
+                await firebaseService.getProduct(item['id'] as String);
+            if (product != null) {
+              final newStock = product.stock - (item['quantity'] as int? ?? 1);
+              final success = await firebaseService.updateProductStock(
+                  item['id'] as String, newStock);
+              if (!success) {
+                print('Warning: Failed to update stock for ${item['id']}');
+              }
+            }
+          } catch (e) {
+            print('Error updating stock: $e');
+            // Continue dengan item berikutnya meski ada error
           }
         }
 

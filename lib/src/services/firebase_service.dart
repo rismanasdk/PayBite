@@ -40,14 +40,17 @@ class FirebaseService {
   }
 
   /// Update product stock (decrease when bought)
-  Future<void> updateProductStock(String productId, int newStock) async {
+  Future<bool> updateProductStock(String productId, int newStock) async {
     try {
       await _firestore
           .collection('products')
           .doc(productId)
           .update({'stock': newStock});
+      print('Stock updated: $productId -> $newStock');
+      return true;
     } catch (e) {
-      print('Error updating stock: $e');
+      print('Error updating stock for $productId: $e');
+      rethrow;
     }
   }
 
