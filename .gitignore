@@ -43,7 +43,7 @@ app.*.map.json
 /android/app/release
 
 #Configurations
-/firebase_options.dart
+lib/firebase_options.dart
 
 # Firebase & Google Services (contains sensitive credentials)
 google-services.json
