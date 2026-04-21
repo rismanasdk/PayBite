@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'session_manager.dart';
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();
@@ -42,13 +43,35 @@ class AuthService {
 
       // Create or update user document in Firestore
       if (userCredential.user != null) {
-        await _firestore.collection('users').doc(userCredential.user!.uid).set({
-          'email': userCredential.user!.email,
-          'displayName': userCredential.user!.displayName,
-          'photoURL': userCredential.user!.photoURL,
-          'role': 'user', // Default role, admin needs to be set manually
-          'lastLogin': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
+        final userDoc = await _firestore
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .get();
+
+        if (!userDoc.exists) {
+          // First time login - create new user with role 'user'
+          await _firestore
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .set({
+            'email': userCredential.user!.email,
+            'displayName': userCredential.user!.displayName,
+            'photoURL': userCredential.user!.photoURL,
+            'role': 'user', // Default role for new users
+            'lastLogin': FieldValue.serverTimestamp(),
+            'lastActivity': FieldValue.serverTimestamp(),
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        } else {
+          // Existing user - only update lastLogin and lastActivity, DO NOT touch role
+          await _firestore
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .update({
+            'lastLogin': FieldValue.serverTimestamp(),
+            'lastActivity': FieldValue.serverTimestamp(),
+          });
+        }
       }
 
       return userCredential;
@@ -83,11 +106,18 @@ class AuthService {
   // Sign out
   Future<void> signOut() async {
     try {
+      SessionManager().stopSessionMonitoring();
+      SessionManager().resetSession();
       await _googleSignIn.signOut();
       await _auth.signOut();
     } catch (e) {
       print('Error signing out: $e');
     }
+  }
+
+  // Start session monitoring after login
+  void startSessionMonitoring() {
+    SessionManager().startSessionMonitoring();
   }
 
   // Get user role

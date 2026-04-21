@@ -8,6 +8,7 @@ import 'src/features/checkout/notes_page.dart';
 import 'src/features/auth/login_page.dart';
 import 'src/features/admin/admin_page.dart';
 import 'src/services/auth_service.dart';
+import 'src/services/session_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +37,9 @@ class PaybiteApp extends StatelessWidget {
           if (snapshot.hasData) {
             // User is logged in
             final userId = snapshot.data!.uid;
+            // Start session monitoring
+            AuthService().startSessionMonitoring();
+
             return FutureBuilder<String>(
               future: AuthService().getUserRole(userId),
               builder: (context, roleSnapshot) {
@@ -46,9 +50,9 @@ class PaybiteApp extends StatelessWidget {
                 }
 
                 if (roleSnapshot.data == 'admin') {
-                  return const AdminPage();
+                  return SessionActivityWrapper(child: AdminPage());
                 } else {
-                  return const UserApp();
+                  return SessionActivityWrapper(child: UserApp());
                 }
               },
             );
@@ -119,3 +123,62 @@ class _UserAppState extends State<UserApp> {
   }
 }
 
+/// Wrapper widget to track user activity and handle session timeout
+class SessionActivityWrapper extends StatefulWidget {
+  final Widget child;
+
+  const SessionActivityWrapper({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  State<SessionActivityWrapper> createState() => _SessionActivityWrapperState();
+}
+
+class _SessionActivityWrapperState extends State<SessionActivityWrapper>
+    with WidgetsBindingObserver {
+  final SessionManager _sessionManager = SessionManager();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // App is back to foreground - check if session still valid
+      _checkSessionValidity();
+    }
+  }
+
+  Future<void> _checkSessionValidity() async {
+    final userId = AuthService().currentUser?.uid;
+    if (userId == null) return;
+
+    final isValid = await _sessionManager.validateSessionFromFirestore(userId);
+
+    if (!isValid && mounted) {
+      // Session expired - logout
+      await AuthService().signOut();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        _sessionManager.recordUserActivity();
+      },
+      child: widget.child,
+    );
+  }
+}
