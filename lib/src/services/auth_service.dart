@@ -44,7 +44,7 @@ class AuthService {
       // Create or update user document in Firestore
       if (userCredential.user != null) {
         final displayName = googleUser.displayName ?? 'User';
-        
+
         // Update Firebase Auth displayName if not set
         if (userCredential.user!.displayName == null ||
             userCredential.user!.displayName!.isEmpty) {
