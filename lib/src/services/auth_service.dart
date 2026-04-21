@@ -43,6 +43,19 @@ class AuthService {
 
       // Create or update user document in Firestore
       if (userCredential.user != null) {
+        final displayName = googleUser.displayName ?? 'User';
+        
+        // Update Firebase Auth displayName if not set
+        if (userCredential.user!.displayName == null ||
+            userCredential.user!.displayName!.isEmpty) {
+          try {
+            await userCredential.user!.updateDisplayName(displayName);
+            await userCredential.user!.reload();
+          } catch (e) {
+            print('Error updating displayName in Firebase Auth: $e');
+          }
+        }
+
         final userDoc = await _firestore
             .collection('users')
             .doc(userCredential.user!.uid)
@@ -55,7 +68,7 @@ class AuthService {
               .doc(userCredential.user!.uid)
               .set({
             'email': userCredential.user!.email,
-            'displayName': userCredential.user!.displayName,
+            'displayName': displayName,
             'photoURL': userCredential.user!.photoURL,
             'role': 'user', // Default role for new users
             'lastLogin': FieldValue.serverTimestamp(),

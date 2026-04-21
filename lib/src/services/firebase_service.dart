@@ -228,6 +228,31 @@ class FirebaseService {
     }
   }
 
+  /// Get user data from Firestore
+  Future<Map<String, dynamic>?> getUserData(String userId) async {
+    try {
+      final doc = await _firestore.collection('users').doc(userId).get();
+      if (doc.exists) {
+        return doc.data();
+      }
+      return null;
+    } catch (e) {
+      print('Error getting user data: $e');
+      return null;
+    }
+  }
+
+  /// Get user display name from Firestore
+  Future<String> getUserDisplayName(String userId) async {
+    try {
+      final userData = await getUserData(userId);
+      return userData?['displayName'] ?? 'Anonymous';
+    } catch (e) {
+      print('Error getting user display name: $e');
+      return 'Anonymous';
+    }
+  }
+
   // ============ COMPLAINTS ============
 
   /// Submit a new complaint

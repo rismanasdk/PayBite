@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function untuk check admin role
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    // Produk - semua orang bisa baca
+    match /products/{document=**} {
+      allow read: if true;
+      // Admin bisa full write
+      allow write: if request.auth.uid != null && isAdmin();
+      // User biasa hanya bisa update stock saat membeli (stock harus berkurang)
+      allow update: if request.auth.uid != null && 
+                       request.resource.data.stock < resource.data.stock;
+    }
+
+    // Users - dengan support untuk read own data dan admin read semua user
+    match /users/{userId} {
+      allow read: if request.auth.uid == userId || isAdmin();
+      allow create: if request.auth.uid == userId;
+      allow update: if request.auth.uid == userId || isAdmin();
+    }
+
+    // Orders
+    match /orders/{orderId} {
+      allow create: if request.auth.uid != null;
+      allow read: if request.auth.uid == resource.data.userId || isAdmin();
+      allow update: if request.auth.uid == resource.data.userId || isAdmin();
+    }
+
+    // Complaints - Users dapat create dan read milik mereka, Admin bisa manage semua
+    match /complaints/{complaintId} {
+      allow create: if request.auth.uid != null &&
+                       request.resource.data.userId == request.auth.uid;
+      
+      allow read: if request.auth.uid == resource.data.userId || isAdmin();
+      
+      allow update: if isAdmin();
+      
+      allow delete: if isAdmin();
+    }
+  }
+}
