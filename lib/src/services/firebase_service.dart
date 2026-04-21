@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import '../models/product.dart';
 import '../models/order.dart' as order_model;
+import '../models/complaint.dart';
 import '../config/cloudinary_config.dart';
 
 class FirebaseService {
@@ -224,6 +225,90 @@ class FirebaseService {
       }, SetOptions(merge: true));
     } catch (e) {
       print('Error creating user document: $e');
+    }
+  }
+
+  // ============ COMPLAINTS ============
+
+  /// Submit a new complaint
+  Future<void> submitComplaint(Complaint complaint) async {
+    try {
+      await _firestore.collection('complaints').add(complaint.toFirestore());
+      print('Complaint submitted successfully');
+    } catch (e) {
+      print('Error submitting complaint: $e');
+      rethrow;
+    }
+  }
+
+  /// Get all complaints for a user
+  Stream<List<Complaint>> getUserComplaintsStream(String userId) {
+    return _firestore
+        .collection('complaints')
+        .where('userId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Complaint.fromFirestore(doc.data(), doc.id))
+          .toList();
+    });
+  }
+
+  /// Get all complaints (Admin only)
+  Stream<List<Complaint>> getAllComplaintsStream() {
+    return _firestore
+        .collection('complaints')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Complaint.fromFirestore(doc.data(), doc.id))
+          .toList();
+    });
+  }
+
+  /// Get pending complaints only (Admin only)
+  Stream<List<Complaint>> getPendingComplaintsStream() {
+    return _firestore
+        .collection('complaints')
+        .where('status', isEqualTo: 'pending')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Complaint.fromFirestore(doc.data(), doc.id))
+          .toList();
+    });
+  }
+
+  /// Update complaint status with admin response
+  Future<void> updateComplaintStatus(
+    String complaintId,
+    String status,
+    String? adminResponse,
+  ) async {
+    try {
+      await _firestore.collection('complaints').doc(complaintId).update({
+        'status': status,
+        'adminResponse': adminResponse,
+        'resolvedAt': status != 'pending' ? FieldValue.serverTimestamp() : null,
+      });
+      print('Complaint updated: $complaintId -> $status');
+    } catch (e) {
+      print('Error updating complaint: $e');
+      rethrow;
+    }
+  }
+
+  /// Delete complaint (Admin only)
+  Future<void> deleteComplaint(String complaintId) async {
+    try {
+      await _firestore.collection('complaints').doc(complaintId).delete();
+      print('Complaint deleted: $complaintId');
+    } catch (e) {
+      print('Error deleting complaint: $e');
+      rethrow;
     }
   }
 }
