@@ -7,7 +7,9 @@ class SessionManager {
   late final FirebaseAuth _auth;
   late final FirebaseFirestore _firestore;
 
-  final Duration inactivityTimeout = const Duration(hours: 1); // 1 minute for testing, change to Duration(hours: 1) for production
+  final Duration inactivityTimeout = const Duration(
+      hours:
+          1); // change this to desired timeout duration (e.g., 30 minutes: Duration(minutes: 30))
   Timer? _inactivityTimer;
   DateTime? _lastActivityTime;
 
@@ -59,12 +61,25 @@ class SessionManager {
   }
 
   /// Handle session timeout - force logout
+  /// This callback will be set by AuthService
+  Function? _onSessionTimeout;
+
+  void setSessionTimeoutCallback(Function callback) {
+    _onSessionTimeout = callback;
+  }
+
   Future<void> _handleSessionTimeout() async {
     print('Session timeout - logging out user due to inactivity');
     stopSessionMonitoring();
 
     try {
-      await _auth.signOut();
+      // Call the callback to perform complete logout (Firebase + Google)
+      if (_onSessionTimeout != null) {
+        await _onSessionTimeout!();
+      } else {
+        // Fallback if callback not set
+        await _auth.signOut();
+      }
     } catch (e) {
       print('Error during forced logout: $e');
     }

@@ -117,7 +117,19 @@ class AuthService {
 
   // Start session monitoring after login
   void startSessionMonitoring() {
+    // Set callback for when session times out
+    SessionManager().setSessionTimeoutCallback(_handleSessionTimeout);
     SessionManager().startSessionMonitoring();
+  }
+
+  // Handle session timeout with complete logout
+  Future<void> _handleSessionTimeout() async {
+    try {
+      await _googleSignIn.signOut();
+      await _auth.signOut();
+    } catch (e) {
+      print('Error during session timeout logout: $e');
+    }
   }
 
   // Get user role
