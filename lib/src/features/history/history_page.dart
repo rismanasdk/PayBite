@@ -3,16 +3,12 @@ import 'package:flutter/material.dart';
 import '../../models/order.dart' as order_model;
 import '../../services/firebase_service.dart';
 import '../../utils/colors.dart';
+import '../../utils/formatting.dart';
+import '../../widgets/stream_widgets.dart';
+import '../../widgets/cached_image_widget.dart';
 
 class HistoryPage extends StatelessWidget {
   const HistoryPage({Key? key}) : super(key: key);
-
-  String _formatPrice(int price) {
-    return price.toString().replaceAllMapped(
-          RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (match) => '.',
-        );
-  }
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
@@ -53,44 +49,20 @@ class HistoryPage extends StatelessWidget {
         stream: firebaseService.getUserOrdersStream(userId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const StreamLoadingWidget();
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error, size: 48, color: Colors.grey[300]),
-                  const SizedBox(height: 16),
-                  Text('Error: ${snapshot.error}'),
-                ],
-              ),
-            );
+            return StreamErrorWidget(error: snapshot.error);
           }
 
           final orders = snapshot.data ?? [];
 
           if (orders.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.receipt_long,
-                    size: 64,
-                    color: Colors.grey[300],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No order history available',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
+            return StreamEmptyWidget(
+              message: 'No order history available',
+              icon: Icons.receipt_long,
+              iconSize: 64,
             );
           }
 
@@ -101,7 +73,6 @@ class HistoryPage extends StatelessWidget {
               final order = orders[index];
               return OrderCard(
                 order: order,
-                formatPrice: _formatPrice,
                 formatDate: _formatDate,
               );
             },
@@ -114,13 +85,11 @@ class HistoryPage extends StatelessWidget {
 
 class OrderCard extends StatelessWidget {
   final order_model.Order order;
-  final String Function(int) formatPrice;
   final String Function(DateTime) formatDate;
 
   const OrderCard({
     Key? key,
     required this.order,
-    required this.formatPrice,
     required this.formatDate,
   }) : super(key: key);
 
@@ -216,20 +185,12 @@ class OrderCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   children: [
-                    ClipRRect(
+                    CachedImageWidget(
+                      imageUrl: item.productImage,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        item.productImage,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          width: 50,
-                          height: 50,
-                          color: Colors.grey[200],
-                          child: const Icon(Icons.image_not_supported),
-                        ),
-                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -244,7 +205,7 @@ class OrderCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'x${item.quantity} @ Rp${formatPrice(item.price)}',
+                            'x${item.quantity} @ Rp${PriceFormatter.formatPrice(item.price)}',
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[600],
@@ -254,7 +215,7 @@ class OrderCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Rp${formatPrice(item.price * item.quantity)}',
+                      'Rp${PriceFormatter.formatPrice(item.price * item.quantity)}',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -281,7 +242,7 @@ class OrderCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Rp${formatPrice(order.totalPrice)}',
+                  'Rp${PriceFormatter.formatPrice(order.totalPrice)}',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../models/product.dart';
 import '../../../services/firebase_service.dart';
+import '../../../widgets/stream_widgets.dart';
+import '../../../widgets/cached_image_widget.dart';
 import 'product_card.dart';
 
 class ProductList extends StatelessWidget {
@@ -35,19 +37,13 @@ class ProductList extends StatelessWidget {
       stream: firebaseService.getProductsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const StreamLoadingWidget();
         }
 
         if (snapshot.hasError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error, size: 48, color: Colors.red),
-                const SizedBox(height: 20),
-                Text('Error: ${snapshot.error}'),
-              ],
-            ),
+          return StreamErrorWidget(
+            error: snapshot.error,
+            iconColor: Colors.red,
           );
         }
 
@@ -55,23 +51,12 @@ class ProductList extends StatelessWidget {
         products = _filterProducts(products);
 
         if (products.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.fastfood, size: 64, color: Colors.grey[300]),
-                const SizedBox(height: 16),
-                Text(
-                  searchQuery.isEmpty
-                      ? 'No products available'
-                      : 'Product not found',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
+          return StreamEmptyWidget(
+            message: searchQuery.isEmpty
+                ? 'No products available'
+                : 'Product not found',
+            icon: Icons.fastfood,
+            iconSize: 64,
           );
         }
 

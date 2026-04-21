@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
+import '../../utils/formatting.dart';
 import '../../models/order.dart' as order_model;
 import '../../services/firebase_service.dart';
 
@@ -21,13 +22,6 @@ class NotesPage extends StatefulWidget {
 class _NotesPageState extends State<NotesPage> {
   final TextEditingController _notesController = TextEditingController();
   bool _isLoading = false;
-
-  String _formatPrice(int price) {
-    return price.toString().replaceAllMapped(
-          RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (match) => '.',
-        );
-  }
 
   Future<void> _processPayment() async {
     setState(() => _isLoading = true);
@@ -187,7 +181,7 @@ class _NotesPageState extends State<NotesPage> {
                                     ),
                                   ),
                                   Text(
-                                    'Rp${_formatPrice((item['price'] ?? 0) * (item['quantity'] ?? 1))}',
+                                    'Rp${PriceFormatter.formatPrice((item['price'] ?? 0) * (item['quantity'] ?? 1))}',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
@@ -209,7 +203,7 @@ class _NotesPageState extends State<NotesPage> {
                                 ),
                               ),
                               Text(
-                                'Rp${_formatPrice(widget.totalPrice)}',
+                                'Rp${PriceFormatter.formatPrice(widget.totalPrice)}',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

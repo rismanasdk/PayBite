@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
+import 'admin_dashboard.dart';
 import 'admin_products.dart';
 import 'admin_orders.dart';
 import 'admin_complaints.dart';
@@ -31,6 +32,7 @@ class _AdminPageState extends State<AdminPage> {
       body: IndexedStack(
         index: _selectedIndex,
         children: const [
+          AdminDashboard(),
           AdminProductsPage(),
           AdminOrdersPage(),
           AdminComplaintsPage(),
@@ -43,10 +45,15 @@ class _AdminPageState extends State<AdminPage> {
             _selectedIndex = index;
           });
         },
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
-            label: 'Home',
+            label: 'Products',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long),
@@ -58,7 +65,7 @@ class _AdminPageState extends State<AdminPage> {
           ),
         ],
       ),
-      floatingActionButton: _selectedIndex == 0
+      floatingActionButton: _selectedIndex == 1
           ? FloatingActionButton(
               onPressed: _showAddProductFromTab,
               child: const Icon(Icons.add),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../utils/colors.dart';
+import '../../../utils/formatting.dart';
+import '../../../widgets/cached_image_widget.dart';
 
 class CartBottomSheet extends StatelessWidget {
   final List<Map<String, dynamic>> cart;
@@ -14,13 +16,6 @@ class CartBottomSheet extends StatelessWidget {
     required this.onUpdateQuantity,
     required this.totalPrice,
   }) : super(key: key);
-
-  String _formatPrice(int price) {
-    return price.toString().replaceAllMapped(
-          RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (match) => '.',
-        );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,21 +78,12 @@ class CartBottomSheet extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          ClipRRect(
+                          CachedImageWidget(
+                            imageUrl: item['image'] ?? '',
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
                             borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              item['image'] ?? '',
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Container(
-                                width: 60,
-                                height: 60,
-                                color: Colors.grey[200],
-                                child: const Icon(Icons.image_not_supported),
-                              ),
-                            ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -115,7 +101,7 @@ class CartBottomSheet extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Rp${_formatPrice((item['price'] ?? 0) * (item['quantity'] ?? 1))}',
+                                  'Rp${PriceFormatter.formatPrice((item['price'] ?? 0) * (item['quantity'] ?? 1))}',
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey,
@@ -236,7 +222,7 @@ class CartBottomSheet extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Rp${_formatPrice(totalPrice)}',
+                      'Rp${PriceFormatter.formatPrice(totalPrice)}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

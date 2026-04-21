@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/firebase_service.dart';
 import '../../models/order.dart' as order_model;
+import '../../widgets/stream_widgets.dart';
+import '../../widgets/cached_image_widget.dart';
 
 class AdminOrdersPage extends StatefulWidget {
   const AdminOrdersPage({Key? key}) : super(key: key);
@@ -311,19 +313,13 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
               stream: _firebaseService.getAllOrdersStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const StreamLoadingWidget();
                 }
 
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.error, size: 48, color: Colors.red),
-                        const SizedBox(height: 16),
-                        Text('Error: ${snapshot.error}'),
-                      ],
-                    ),
+                  return StreamErrorWidget(
+                    error: snapshot.error,
+                    iconColor: Colors.red,
                   );
                 }
 
@@ -331,19 +327,9 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
                 orders = _filterOrdersByDate(orders);
 
                 if (orders.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.shopping_cart_outlined,
-                            size: 48, color: Colors.grey[400]),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No orders available',
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ],
-                    ),
+                  return StreamEmptyWidget(
+                    message: 'No orders available',
+                    icon: Icons.shopping_cart_outlined,
                   );
                 }
 

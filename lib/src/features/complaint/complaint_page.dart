@@ -4,6 +4,7 @@ import 'dart:io';
 import '../../services/firebase_service.dart';
 import '../../services/auth_service.dart';
 import '../../models/complaint.dart';
+import '../../widgets/cached_image_widget.dart';
 
 class ComplaintPage extends StatefulWidget {
   const ComplaintPage({Key? key}) : super(key: key);
@@ -45,7 +46,8 @@ class _ComplaintPageState extends State<ComplaintPage> {
   Future<void> _submitComplaint() async {
     if (_descriptionController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in the complaint description')),
+        const SnackBar(
+            content: Text('Please fill in the complaint description')),
       );
       return;
     }

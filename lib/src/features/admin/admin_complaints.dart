@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../services/firebase_service.dart';
 import '../../models/complaint.dart';
+import '../../widgets/stream_widgets.dart';
+import '../../widgets/cached_image_widget.dart';
 
 class AdminComplaintsPage extends StatefulWidget {
   const AdminComplaintsPage({Key? key}) : super(key: key);
@@ -212,37 +214,22 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
                           .toList()),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const StreamLoadingWidget();
                 }
 
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.error, size: 48, color: Colors.red),
-                        const SizedBox(height: 16),
-                        Text('Error: ${snapshot.error}'),
-                      ],
-                    ),
+                  return StreamErrorWidget(
+                    error: snapshot.error,
+                    iconColor: Colors.red,
                   );
                 }
 
                 final complaints = snapshot.data ?? [];
 
                 if (complaints.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.inbox, size: 48, color: Colors.grey[400]),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No complaints available',
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ],
-                    ),
+                  return StreamEmptyWidget(
+                    message: 'No complaints available',
+                    icon: Icons.inbox,
                   );
                 }
 

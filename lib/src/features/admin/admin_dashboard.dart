@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/firebase_service.dart';
 import '../../models/order.dart' as order_model;
 import '../../models/complaint.dart';
+import '../../widgets/stream_widgets.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({Key? key}) : super(key: key);
@@ -139,7 +140,7 @@ class AdminDashboard extends StatelessWidget {
             stream: firebaseService.getAllOrdersStream(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const StreamLoadingWidget();
               }
 
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
