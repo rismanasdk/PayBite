@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 import '../models/product.dart';
 import '../models/order.dart' as order_model;
+import '../config/cloudinary_config.dart';
 
 class FirebaseService {
   static final FirebaseService _instance = FirebaseService._internal();
@@ -84,6 +87,62 @@ class FirebaseService {
           .update(product.toFirestore());
     } catch (e) {
       print('Error updating product: $e');
+    }
+  }
+
+  /// Upload product image to Cloudinary
+  Future<String> uploadProductImage(XFile imageFile) async {
+    try {
+      if (!CloudinaryConfig.isConfigured()) {
+        print('Cloudinary not configured!');
+        return imageFile.path;
+      }
+
+      final bytes = await imageFile.readAsBytes();
+      final request =
+          http.MultipartRequest('POST', Uri.parse(CloudinaryConfig.uploadUrl));
+
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          bytes,
+          filename: imageFile.name,
+        ),
+      );
+      request.fields['upload_preset'] = CloudinaryConfig.uploadPreset;
+
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final responseData = await response.stream.toBytes();
+        final responseString = String.fromCharCodes(responseData);
+        final imageUrl = _extractUrlFromResponse(responseString);
+        print('Cloudinary upload success: $imageUrl');
+        return imageUrl;
+      } else {
+        print('Cloudinary upload failed: ${response.statusCode}');
+        // Fallback ke local path
+        return imageFile.path;
+      }
+    } catch (e) {
+      print('Error uploading to Cloudinary: $e');
+      // Fallback ke local path
+      return imageFile.path;
+    }
+  }
+
+  /// Extract URL from Cloudinary response
+  String _extractUrlFromResponse(String response) {
+    try {
+      // Simple JSON parsing untuk extract secure_url
+      final urlMatch = RegExp(r'"secure_url":"([^"]+)"').firstMatch(response);
+      if (urlMatch != null) {
+        return urlMatch.group(1) ?? '';
+      }
+      return '';
+    } catch (e) {
+      print('Error parsing Cloudinary response: $e');
+      return '';
     }
   }
 

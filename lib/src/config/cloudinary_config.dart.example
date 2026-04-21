@@ -1,0 +1,30 @@
+// Just replace on line 4 and 5
+
+class CloudinaryConfig {
+  static const String cloudName = 'YOUR_CLOUD_NAME';
+  static const String uploadPreset = 'YOUR_UPLOAD_PRESET';
+
+  static String get uploadUrl =>
+      'https://api.cloudinary.com/v1_1/$cloudName/image/upload';
+
+  /// Validate configuration
+  static bool isConfigured() {
+    return cloudName != 'YOUR_CLOUD_NAME' &&
+        uploadPreset != 'YOUR_UPLOAD_PRESET';
+  }
+
+  static String getSetupInstructions() {
+    return '''
+    CLOUDINARY SETUP GUIDE:
+      1. Go to https://cloudinary.com and create a free account
+      2. In the dashboard, search for "Cloud Name" and copy it
+      3. Go to Settings > Upload > Unsigned uploads, activate it and create a preset
+      4. Copy the preset name
+      5. In this file, replace:
+      - YOUR CLOUD_NAME with your Cloud Name
+      - YOUR_UPLOAD_PRESET with Upload Your Preset
+      6. Run: flutter pub get
+      7. Done! Uploading photos is now possible :)
+    ''';
+  }
+}

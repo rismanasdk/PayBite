@@ -13,16 +13,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final ValueNotifier<List<Map<String, dynamic>>> _cartNotifier;
+  late final ValueNotifier<String> _searchNotifier;
 
   @override
   void initState() {
     super.initState();
     _cartNotifier = ValueNotifier<List<Map<String, dynamic>>>([]);
+    _searchNotifier = ValueNotifier<String>('');
   }
 
   @override
   void dispose() {
     _cartNotifier.dispose();
+    _searchNotifier.dispose();
     super.dispose();
   }
 
@@ -98,10 +101,18 @@ class _HomePageState extends State<HomePage> {
           children: [
             const HomeHeader(),
             const SizedBox(height: 16),
-            const SearchBarWidget(),
+            SearchBarWidget(searchNotifier: _searchNotifier),
             const SizedBox(height: 16),
             Expanded(
-              child: ProductList(onAddToCart: _addToCart),
+              child: ValueListenableBuilder<String>(
+                valueListenable: _searchNotifier,
+                builder: (context, searchQuery, _) {
+                  return ProductList(
+                    onAddToCart: _addToCart,
+                    searchQuery: searchQuery,
+                  );
+                },
+              ),
             ),
           ],
         ),

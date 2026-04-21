@@ -5,7 +5,27 @@ import 'product_card.dart';
 
 class ProductList extends StatelessWidget {
   final void Function(Map<String, dynamic>) onAddToCart;
-  const ProductList({Key? key, required this.onAddToCart}) : super(key: key);
+  final String searchQuery;
+
+  const ProductList({
+    Key? key,
+    required this.onAddToCart,
+    this.searchQuery = '',
+  }) : super(key: key);
+
+  /// Filter produk berdasarkan search query
+  List<Product> _filterProducts(List<Product> products) {
+    if (searchQuery.isEmpty) {
+      return products;
+    }
+
+    final query = searchQuery.toLowerCase();
+    return products
+        .where((product) =>
+            product.name.toLowerCase().contains(query) ||
+            product.price.toString().contains(query))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +51,8 @@ class ProductList extends StatelessWidget {
           );
         }
 
-        final products = snapshot.data ?? [];
+        var products = snapshot.data ?? [];
+        products = _filterProducts(products);
 
         if (products.isEmpty) {
           return Center(
@@ -41,7 +62,9 @@ class ProductList extends StatelessWidget {
                 Icon(Icons.fastfood, size: 64, color: Colors.grey[300]),
                 const SizedBox(height: 16),
                 Text(
-                  'Belum ada produk',
+                  searchQuery.isEmpty
+                      ? 'Belum ada produk'
+                      : 'Produk tidak ditemukan',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[600],
@@ -56,7 +79,7 @@ class ProductList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.65,
+            childAspectRatio: 0.55,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
           ),

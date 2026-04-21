@@ -44,6 +44,7 @@ app.*.map.json
 
 #Configurations
 lib/firebase_options.dart
+lib/src/config/cloudinary_config.dart
 
 # Firebase & Google Services (contains sensitive credentials)
 google-services.json
@@ -86,3 +87,4 @@ gradle-app.setting
 /lib/generated_plugin_registrant.dart
 .flutter_plugins
 .flutter_plugins_dependencies
+

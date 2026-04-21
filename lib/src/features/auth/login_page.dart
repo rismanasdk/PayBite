@@ -32,11 +32,11 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.shopping_bag,
-                  size: 80,
-                  color: Colors.white,
-                ),
+                Image.asset(
+          'lib/src/assets/Logo.png',
+          width: 80,
+          height: 80,
+        ),
                 const SizedBox(height: 24),
                 const Text(
                   'Paybite',

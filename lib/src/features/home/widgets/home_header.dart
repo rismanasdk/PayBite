@@ -61,46 +61,59 @@ class HomeHeader extends StatelessWidget {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24),
       alignment: Alignment.center,
+      
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'PayBite',
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+  crossAxisAlignment: CrossAxisAlignment.center,
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    /// LOGO + TEXT (digabung)
+    Row(
+      children: [
+        Image.asset(
+          'lib/src/assets/Logo.png',
+          width: 40,
+          height: 40,
+        ),
+        const SizedBox(width: 8), // 🔥 jarak dikit biar nempel
+        const Text(
+          'PayBite',
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
+        ),
+      ],
+    ),
 
-          GestureDetector(
-            key: avatarKey,
-            onTap: () => _showLogoutMenu(context, avatarKey),
-            child: SizedBox(
-              width: 40,
-              height: 40,
-              child: currentUser?.photoURL != null
-                  ? CircleAvatar(
-                      radius: 20,
-                      backgroundImage:
-                          NetworkImage(currentUser!.photoURL!),
-                    )
-                  : CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.white.withOpacity(0.3),
-                      child: const Center(
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-            ),
-          ),
-        ],
+    /// AVATAR
+    GestureDetector(
+      key: avatarKey,
+      onTap: () => _showLogoutMenu(context, avatarKey),
+      child: SizedBox(
+        width: 40,
+        height: 40,
+        child: currentUser?.photoURL != null
+            ? CircleAvatar(
+                radius: 20,
+                backgroundImage:
+                    NetworkImage(currentUser!.photoURL!),
+              )
+            : CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.white.withOpacity(0.3),
+                child: const Center(
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ),
       ),
+    ),
+  ],
+),
     );
   }
 }
