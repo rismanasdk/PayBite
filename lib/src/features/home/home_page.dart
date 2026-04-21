@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Keranjang (${cart.length})',
+                              'Cart (${cart.length})',
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Text(
-                          'Konfirmasi',
+                          'Confirm Order',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,

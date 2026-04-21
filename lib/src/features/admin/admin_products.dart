@@ -38,7 +38,8 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                     const Icon(Icons.shopping_bag_outlined,
                         size: 64, color: Colors.grey),
                     const SizedBox(height: 16),
-                    const Text('Belum ada produk'),
+                    const Text('No products available',
+                        style: TextStyle(fontSize: 16, color: Colors.grey)),
                   ],
                 ),
               )
@@ -48,7 +49,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                   ElevatedButton.icon(
                     onPressed: _showAddProductDialog,
                     icon: const Icon(Icons.add),
-                    label: const Text('Tambah Produk'),
+                    label: const Text('Add Product'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(16),
                     ),
@@ -98,7 +99,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Stok: ${product.stock}',
+                        'Stock: ${product.stock}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -123,7 +124,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                   onPressed: () => _showDeleteConfirmation(product),
                   icon: const Icon(Icons.delete, color: Colors.red),
                   label:
-                      const Text('Hapus', style: TextStyle(color: Colors.red)),
+                      const Text('Delete', style: TextStyle(color: Colors.red)),
                 ),
               ],
             ),
@@ -193,7 +194,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Tambah Produk'),
+          title: const Text('Add Product'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -201,7 +202,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Nama Produk',
+                    labelText: 'Product Name',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -210,7 +211,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                   controller: priceController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: 'Harga',
+                    labelText: 'Price',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -219,7 +220,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                   controller: stockController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: 'Stok',
+                    labelText: 'Stock',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -237,8 +238,8 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                   },
                   icon: const Icon(Icons.image),
                   label: selectedImage == null
-                      ? const Text('Pilih Gambar')
-                      : const Text('Gambar Dipilih'),
+                      ? const Text('Select Image')
+                      : const Text('Image Selected'),
                 ),
                 if (selectedImage != null)
                   Padding(
@@ -259,7 +260,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Batal'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -268,7 +269,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                     stockController.text.isEmpty ||
                     selectedImage == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Semua field harus diisi')),
+                    const SnackBar(content: Text('All fields are required')),
                   );
                   return;
                 }
@@ -303,7 +304,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                     Navigator.pop(context); // Close add product dialog
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('Produk berhasil ditambahkan')),
+                          content: Text('Product added successfully')),
                     );
                   }
                 } catch (e) {
@@ -315,7 +316,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                   }
                 }
               },
-              child: const Text('Tambah'),
+              child: const Text('Add'),
             ),
           ],
         ),
@@ -336,7 +337,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Edit Produk'),
+          title: const Text('Edit Product'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -344,7 +345,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Nama Produk',
+                    labelText: 'Product Name',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -353,7 +354,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                   controller: priceController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: 'Harga',
+                    labelText: 'Price',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -362,7 +363,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                   controller: stockController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: 'Stok',
+                    labelText: 'Stock',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -379,7 +380,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                     }
                   },
                   icon: const Icon(Icons.image),
-                  label: const Text('Ganti Gambar'),
+                  label: const Text('Change Image'),
                 ),
                 const SizedBox(height: 12),
                 if (selectedImage != null)
@@ -389,7 +390,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Gambar Baru:',
+                          'New Image:',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
@@ -410,7 +411,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Gambar Saat Ini:',
+                        'Current Image:',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
@@ -456,7 +457,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Batal'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -464,7 +465,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                     priceController.text.isEmpty ||
                     stockController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Semua field harus diisi')),
+                    const SnackBar(content: Text('All fields are required')),
                   );
                   return;
                 }
@@ -504,7 +505,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                     Navigator.pop(context); // Close edit dialog
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('Produk berhasil diperbarui')),
+                          content: Text('Product updated successfully')),
                     );
                   }
                 } catch (e) {
@@ -516,7 +517,7 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                   }
                 }
               },
-              child: const Text('Simpan'),
+              child: const Text('Save'),
             ),
           ],
         ),
@@ -528,12 +529,12 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Hapus Produk'),
-        content: Text('Yakin ingin menghapus ${product.name}?'),
+        title: const Text('Delete Product'),
+        content: Text('Are you sure you want to delete ${product.name}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -541,14 +542,14 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
               if (mounted) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Produk berhasil dihapus')),
+                  const SnackBar(content: Text('Product deleted successfully')),
                 );
               }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            child: const Text('Hapus', style: TextStyle(color: Colors.white)),
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

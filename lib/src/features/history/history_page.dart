@@ -26,7 +26,7 @@ class HistoryPage extends StatelessWidget {
     if (userId == null) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Riwayat Pesanan'),
+          title: const Text('Order History'),
           centerTitle: true,
           elevation: 0,
         ),
@@ -36,7 +36,7 @@ class HistoryPage extends StatelessWidget {
             children: [
               Icon(Icons.lock, size: 48, color: Colors.grey[300]),
               const SizedBox(height: 16),
-              const Text('Silakan login terlebih dahulu'),
+              const Text('Please login first to view your order history'),
             ],
           ),
         ),
@@ -45,7 +45,7 @@ class HistoryPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Riwayat Pesanan'),
+        title: const Text('Order History'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -83,7 +83,7 @@ class HistoryPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Belum ada riwayat pesanan',
+                    'No order history available',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -142,13 +142,13 @@ class OrderCard extends StatelessWidget {
   String _getStatusText(String status) {
     switch (status) {
       case 'pending':
-        return 'Menunggu Pembayaran';
+        return 'Pending Payment';
       case 'paid':
-        return 'Sudah Dibayar';
+        return 'Paid';
       case 'completed':
-        return 'Selesai';
+        return 'Completed';
       case 'cancelled':
-        return 'Dibatalkan';
+        return 'Cancelled';
       default:
         return status;
     }
@@ -302,7 +302,7 @@ class OrderCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Catatan:',
+                      'Notes:',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,

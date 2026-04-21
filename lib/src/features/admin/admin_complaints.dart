@@ -44,14 +44,14 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
 
                 // Complaint Date
                 Text(
-                  'Tanggal: ${complaint.createdAt.toString().split('.')[0]}',
+                  'Date: ${complaint.createdAt.toString().split('.')[0]}',
                   style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 const SizedBox(height: 16),
 
                 // Description
                 const Text(
-                  'Keterangan:',
+                  'Description:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -67,7 +67,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
 
                 // Photo
                 const Text(
-                  'Foto Bukti:',
+                  'Proof Photo:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -79,7 +79,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
                     fit: BoxFit.cover,
                   )
                 else
-                  const Text('Tidak ada foto'),
+                  const Text('No photo evidence provided.'),
                 const SizedBox(height: 16),
 
                 // Status Dropdown
@@ -107,7 +107,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
 
                 // Response
                 const Text(
-                  'Respons Admin:',
+                  'Admin Response:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -115,7 +115,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
                   controller: _responseController,
                   maxLines: 3,
                   decoration: InputDecoration(
-                    hintText: 'Tuliskan respons atau tindakan...',
+                    hintText: 'Write down your response or action...',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
@@ -128,7 +128,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Batal'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -144,7 +144,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('Complaint berhasil diupdate')),
+                          content: Text('Complaint successfully updated')),
                     );
                   }
                 } catch (e) {
@@ -153,7 +153,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
                   );
                 }
               },
-              child: const Text('Simpan'),
+              child: const Text('Save'),
             ),
           ],
         ),
@@ -178,7 +178,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kelola Complaint'),
+        title: const Text('Manage Complaint'),
         elevation: 0,
       ),
       body: Column(
@@ -190,7 +190,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _buildFilterChip('all', 'Semua'),
+                  _buildFilterChip('all', 'All'),
                   const SizedBox(width: 8),
                   _buildFilterChip('pending', 'Pending'),
                   const SizedBox(width: 8),
@@ -238,7 +238,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
                         Icon(Icons.inbox, size: 48, color: Colors.grey[400]),
                         const SizedBox(height: 16),
                         Text(
-                          'Tidak ada complaint',
+                          'No complaints available',
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                       ],

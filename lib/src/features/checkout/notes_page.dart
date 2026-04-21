@@ -37,7 +37,7 @@ class _NotesPageState extends State<NotesPage> {
       final userId = FirebaseAuth.instance.currentUser?.uid;
 
       if (userId == null) {
-        throw Exception('Silakan login terlebih dahulu');
+        throw Exception('Please login first');
       }
 
       // Convert cart items ke OrderItems
@@ -88,7 +88,7 @@ class _NotesPageState extends State<NotesPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content:
-                  Text('Pembayaran berhasil! Terima kasih atas pesanan Anda.'),
+                  Text('Payment successful! Thank you for your order.'),
               backgroundColor: Colors.green,
             ),
           );
@@ -125,7 +125,7 @@ class _NotesPageState extends State<NotesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Catatan Pesanan'),
+        title: const Text('Order Notes'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -150,7 +150,7 @@ class _NotesPageState extends State<NotesPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Detail Pesanan',
+                            'Order Details',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -170,7 +170,7 @@ class _NotesPageState extends State<NotesPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          item['name'] ?? 'Produk',
+                                          item['name'] ?? 'Product Name',
                                           style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
@@ -225,7 +225,7 @@ class _NotesPageState extends State<NotesPage> {
 
                     // Catatan (Optional)
                     const Text(
-                      'Catatan (Opsional)',
+                      'Notes (Optional)',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -236,7 +236,7 @@ class _NotesPageState extends State<NotesPage> {
                       controller: _notesController,
                       maxLines: 4,
                       decoration: InputDecoration(
-                        hintText: 'Tambahkan catatan untuk pesanan Anda...',
+                        hintText: 'Add notes for your order...',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: Colors.grey[300]!),
@@ -281,7 +281,7 @@ class _NotesPageState extends State<NotesPage> {
                       ),
                     ),
                     onPressed: _isLoading ? null : () => Navigator.pop(context),
-                    child: const Text('Batalkan'),
+                    child: const Text('Cancel'),
                   ),
                 ),
                 const SizedBox(width: 12),

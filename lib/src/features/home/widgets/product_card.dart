@@ -50,7 +50,7 @@ class ProductCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Stok: ${product.stock}',
+                      'Stock: ${product.stock}',
                       style: const TextStyle(
                         fontSize: 12,
                         color: Colors.grey,
@@ -85,7 +85,7 @@ class ProductCard extends StatelessWidget {
                             })
                         : null,
                     child: Text(
-                      product.stock > 0 ? 'Keranjang' : 'Stok Habis',
+                      product.stock > 0 ? 'Add to Cart' : 'Out of Stock',
                     ),
                   ),
                 ),

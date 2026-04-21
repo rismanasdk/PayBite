@@ -13,7 +13,7 @@ class AdminOrdersPage extends StatefulWidget {
 class _AdminOrdersPageState extends State<AdminOrdersPage> {
   final _firebaseService = FirebaseService();
 
-  String _selectedFilter = 'hari'; // hari, minggu, bulan, tahun
+  String _selectedFilter = 'day'; // day, weekly, mounth, years
   DateTime? _startDate;
   DateTime? _endDate;
 
@@ -25,8 +25,8 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
 
   void _setDefaultDateRange() {
     final now = DateTime.now();
-    _startDate = DateTime(now.year, now.month, now.day); // Awal hari
-    _endDate = DateTime(now.year, now.month, now.day, 23, 59, 59); // Akhir hari
+    _startDate = DateTime(now.year, now.month, now.day); // Awal day
+    _endDate = DateTime(now.year, now.month, now.day, 23, 59, 59); // Akhir day
   }
 
   void _updateDateRange(String filter) {
@@ -36,20 +36,20 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
       _selectedFilter = filter;
 
       switch (filter) {
-        case 'hari':
+        case 'day':
           _startDate = DateTime(now.year, now.month, now.day);
           _endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
           break;
-        case 'minggu':
+        case 'weekly':
           final weekStart = now.subtract(Duration(days: now.weekday - 1));
           _startDate = DateTime(weekStart.year, weekStart.month, weekStart.day);
           _endDate = now;
           break;
-        case 'bulan':
+        case 'mounth':
           _startDate = DateTime(now.year, now.month, 1);
           _endDate = now;
           break;
-        case 'tahun':
+        case 'years':
           _startDate = DateTime(now.year, 1, 1);
           _endDate = now;
           break;
@@ -70,7 +70,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Detail Pesanan'),
+        title: const Text('Detail Order'),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +100,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
 
               // Items
               const Text(
-                'Pesanan:',
+                'Order Items:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -168,7 +168,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
               // Notes
               if (order.notes != null && order.notes!.isNotEmpty) ...[
                 const Text(
-                  'Deskripsi:',
+                  'Description:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -194,7 +194,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Total Harga:',
+                      'Total Price:',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -216,7 +216,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
 
               // Tanggal
               Text(
-                'Tanggal: ${order.createdAt.toString().split('.')[0]}',
+                'Date: ${order.createdAt.toString().split('.')[0]}',
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
@@ -225,7 +225,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Tutup'),
+            child: const Text('Close'),
           ),
         ],
       ),
@@ -264,7 +264,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kelola Pesanan'),
+        title: const Text('Manage Orders'),
         elevation: 0,
       ),
       body: Column(
@@ -278,7 +278,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
                   child: DropdownButton<String>(
                     isExpanded: true,
                     value: _selectedFilter,
-                    items: ['hari', 'minggu', 'bulan', 'tahun']
+                    items: ['day', 'weekly', 'mounth', 'years']
                         .map((filter) => DropdownMenuItem(
                               value: filter,
                               child: Text(
@@ -339,7 +339,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
                             size: 48, color: Colors.grey[400]),
                         const SizedBox(height: 16),
                         Text(
-                          'Tidak ada pesanan',
+                          'No orders available',
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                       ],
@@ -407,7 +407,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
 
                               // Items Preview
                               Text(
-                                'Pesanan: ${order.items.length} item',
+                                'Order Items: ${order.items.length} item',
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey,

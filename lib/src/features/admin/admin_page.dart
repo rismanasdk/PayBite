@@ -46,15 +46,15 @@ class _AdminPageState extends State<AdminPage> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_bag),
-            label: 'CRUD',
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long),
-            label: 'Pesanan',
+            label: 'Orders',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.report_problem),
-            label: 'Complaint',
+            label: 'Complaints',
           ),
         ],
       ),
@@ -77,11 +77,11 @@ class _AdminPageState extends State<AdminPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Logout'),
-        content: const Text('Yakin ingin logout?'),
+        content: const Text('Are you sure you want to logout?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {

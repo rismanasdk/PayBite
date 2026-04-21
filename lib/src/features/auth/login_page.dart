@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
                 const SizedBox(height: 24),
                 const Text(
-                  'Paybite',
+                  'PayBite',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(width: 12),
                         const Expanded(
                           child: Text(
-                            'Login dengan Google',
+                            'Login with Google',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 16),
                           ),
@@ -106,13 +106,13 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
-                Text('Selamat datang, ${userCredential.user?.displayName}'),
+                Text('Welcome, ${userCredential.user?.displayName}'),
           ),
         );
         // Navigation handled by StreamBuilder in main
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login dibatalkan')),
+          const SnackBar(content: Text('Login cancelled')),
         );
       }
     } catch (e) {

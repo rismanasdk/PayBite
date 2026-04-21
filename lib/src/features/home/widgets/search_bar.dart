@@ -20,7 +20,7 @@ class SearchBarWidget extends StatelessWidget {
               searchNotifier.value = value;
             },
             decoration: InputDecoration(
-              hintText: 'Cari makanan... ',
+              hintText: 'Search food... ',
               prefixIcon: const Icon(Icons.search),
               suffixIcon: searchValue.isEmpty
                   ? null

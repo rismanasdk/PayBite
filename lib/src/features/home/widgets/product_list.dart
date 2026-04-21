@@ -63,8 +63,8 @@ class ProductList extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   searchQuery.isEmpty
-                      ? 'Belum ada produk'
-                      : 'Produk tidak ditemukan',
+                      ? 'No products available'
+                      : 'Product not found',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[600],

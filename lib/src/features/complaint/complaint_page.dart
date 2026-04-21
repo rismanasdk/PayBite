@@ -45,14 +45,14 @@ class _ComplaintPageState extends State<ComplaintPage> {
   Future<void> _submitComplaint() async {
     if (_descriptionController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Silakan isi keterangan complaint')),
+        const SnackBar(content: Text('Please fill in the complaint description')),
       );
       return;
     }
 
     if (_selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Silakan pilih foto sebagai bukti')),
+        const SnackBar(content: Text('Please select a photo as evidence')),
       );
       return;
     }
@@ -64,7 +64,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
     try {
       final currentUser = _authService.currentUser;
       if (currentUser == null) {
-        throw Exception('User tidak login');
+        throw Exception('User is not logged in');
       }
 
       // Upload image to Cloudinary
@@ -91,7 +91,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Complaint berhasil dikirim!')),
+          const SnackBar(content: Text('Complaint submitted successfully!')),
         );
         _descriptionController.clear();
         setState(() {
@@ -117,7 +117,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Buat Complaint'),
+        title: const Text('Make Complaint'),
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -127,7 +127,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
           children: [
             // Image Section
             const Text(
-              'Foto Bukti',
+              'Evidence Photo',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
@@ -152,7 +152,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Tap untuk pilih foto',
+                            'Tap to select photo',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 14,
@@ -199,7 +199,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
 
             // Description Section
             const Text(
-              'Keterangan Complaint',
+              'Complaint Description',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
@@ -207,7 +207,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
               controller: _descriptionController,
               maxLines: 6,
               decoration: InputDecoration(
-                hintText: 'Jelaskan masalah atau keluhan Anda...',
+                hintText: 'Explain your issue or complaint...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -237,7 +237,7 @@ class _ComplaintPageState extends State<ComplaintPage> {
                         ),
                       )
                     : const Text(
-                        'Kirim Complaint',
+                        'Submit Complaint',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

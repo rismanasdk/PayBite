@@ -50,7 +50,7 @@ class CartBottomSheet extends StatelessWidget {
                 const Icon(Icons.shopping_cart, color: Colors.orange),
                 const SizedBox(width: 12),
                 Text(
-                  'Keranjang (${cart.length})',
+                  'Cart (${cart.length})',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -105,7 +105,7 @@ class CartBottomSheet extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  item['name'] ?? 'Produk',
+                                  item['name'] ?? 'Product Name',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -229,7 +229,7 @@ class CartBottomSheet extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Total Harga:',
+                      'Total Price:',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -269,7 +269,7 @@ class CartBottomSheet extends StatelessWidget {
                       );
                     },
                     child: const Text(
-                      'Konfirmasi',
+                      'Confirm Order',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
