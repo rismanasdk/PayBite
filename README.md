@@ -81,6 +81,7 @@ flutter pub get
 - Download `google-services.json` (Android) and place in `android/app/`
 - Download `GoogleService-Info.plist` (iOS) and place in `ios/Runner/`
 - Generate `lib/firebase_options.dart` using FlutterFire CLI
+- Change Content `web/index.html.example` on line 33
 
 4. **Configure Cloudinary** (optional for image upload)
 - Create account at [Cloudinary](https://cloudinary.com)
