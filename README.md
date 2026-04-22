@@ -1,26 +1,26 @@
-# 🍕 Paybite - E-Commerce & Complaint Management System
+#  Paybite - E-Commerce & Complaint Management System
 
 A modern Flutter mobile application for online food ordering with integrated complaint management and admin dashboard.
 
-## ✨ Features
+## Features
 
 ### User Features
-- 🔐 **Google Authentication** - Secure login via Google
-- 🛍️ **Product Browsing** - Browse food items with image and details
-- 🛒 **Shopping Cart** - Add/remove products before checkout
-- 💳 **Checkout** - Purchase products with order tracking
-- 📜 **Order History** - View all past transactions
-- 📸 **Complaint System** - Report issues with image evidence
-- ⏱️ **Session Management** - Auto-logout on inactivity
+-  **Google Authentication** - Secure login via Google
+-  **Product Browsing** - Browse food items with image and details
+-  **Shopping Cart** - Add/remove products before checkout
+-  **Checkout** - Purchase products with order tracking
+-  **Order History** - View all past transactions
+-  **Complaint System** - Report issues with image evidence
+-  **Session Management** - Auto-logout on inactivity
 
 ### Admin Features
-- 📊 **Dashboard** - Overview of sales, orders, and complaints
-- 📦 **Product Management** - Add, edit, delete food items
-- 🚚 **Order Management** - Track and update order status
-- 🔧 **Complaint Resolution** - Manage and respond to complaints
-- 👥 **User Management** - View user information and activity
+-  **Dashboard** - Overview of sales, orders, and complaints
+-  **Product Management** - Add, edit, delete food items
+-  **Order Management** - Track and update order status
+-  **Complaint Resolution** - Manage and respond to complaints
+-  **User Management** - View user information and activity
 
-## 🏗️ Tech Stack
+##  Tech Stack
 
 - **Frontend**: Flutter (Dart)
 - **Backend**: Firebase (Authentication, Firestore, Cloud Storage)
@@ -28,7 +28,7 @@ A modern Flutter mobile application for online food ordering with integrated com
 - **State Management**: Streams & FutureBuilder
 - **Platform**: Android, iOS, Web, Linux, Windows, macOS
 
-## 📱 Project Structure
+##  Project Structure
 
 ```
 lib/
@@ -55,7 +55,7 @@ lib/
     └── utils/               # Helper utilities
 ```
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Flutter SDK (latest)
@@ -98,7 +98,7 @@ firebase deploy --only firestore:rules
 flutter run
 ```
 
-## 🔐 Firestore Security Rules
+##  Firestore Security Rules
 
 The app uses role-based access control (RBAC):
 - **Admin**: Full access to all collections
@@ -106,7 +106,7 @@ The app uses role-based access control (RBAC):
 
 See [FIRESTORE_RULES_FIXED.txt](./FIRESTORE_RULES_FIXED.txt) for complete security rules.
 
-## 📦 Key Dependencies
+##  Key Dependencies
 
 ```yaml
 firebase_core: ^2.x
@@ -117,14 +117,14 @@ image_picker: ^1.x
 http: ^1.x
 ```
 
-## 🎨 UI Components
+##  UI Components
 
 - Material Design 3
 - Custom widgets for product cards, order cards
 - Responsive layout for all screen sizes
 - Bottom navigation for navigation
 
-## 📡 API Integration
+##  API Integration
 
 ### Firestore Collections
 - **users** - User profiles and roles
@@ -137,12 +137,12 @@ http: ^1.x
 - Anonymous mode (testing)
 - Session token management
 
-## 🧪 Testing
+##  Testing
 
 Test accounts can be created via Google OAuth. For admin testing:
 - Use test account with `role: 'admin'` in Firestore
 
-## 📝 Environment Setup
+##  Environment Setup
 
 Create `.env` file (not committed):
 ```
@@ -150,7 +150,7 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_UPLOAD_PRESET=your_preset
 ```
 
-## 🐛 Known Issues & Troubleshooting
+##  Known Issues & Troubleshooting
 
 ### Permission Denied Error
 - Check Firestore security rules are deployed
@@ -162,7 +162,7 @@ CLOUDINARY_UPLOAD_PRESET=your_preset
 - Display name pulled from Firestore, not Firebase Auth
 - Ensure user document created on first login
 
-## 🤝 Contributing
+##  Contributing
 
 1. Fork the repository
 2. Create feature branch (`git checkout -b feature/amazing-feature`)
@@ -170,20 +170,20 @@ CLOUDINARY_UPLOAD_PRESET=your_preset
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open Pull Request
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see [LICENSE](./LICENSE) file for details.
 
-## 👨‍💻 Author
+##  Author
 
 **Risman Hadinata**
 - GitHub: [@rismanasdk](https://github.com/rismanasdk)
 
-## 📧 Support
+##  Support
 
 For support, email risman@paybite.local or open an issue in the repository.
 
-## 🗺️ Roadmap
+##  Roadmap
 
 - [ ] Push notifications for orders
 - [ ] Payment gateway integration
