@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ class AuthService {
   late final FirebaseAuth _auth;
   late final GoogleSignIn _googleSignIn;
   late final FirebaseFirestore _firestore;
+  bool _isInitialized = false;
 
   factory AuthService() {
     return _instance;
@@ -15,8 +17,24 @@ class AuthService {
 
   AuthService._internal() {
     _auth = FirebaseAuth.instance;
-    _googleSignIn = GoogleSignIn();
+    _googleSignIn = GoogleSignIn(
+      clientId:
+          '125155915973-l6facmirjonndni6jlnc80brqqfjejm1.apps.googleusercontent.com',
+      scopes: ['email', 'profile'],
+    );
     _firestore = FirebaseFirestore.instance;
+  }
+
+  // Initialize Google Sign In once
+  Future<void> _initializeGoogleSignIn() async {
+    if (!_isInitialized) {
+      try {
+        await _googleSignIn.signOut(); // Clear previous session
+        _isInitialized = true;
+      } catch (e) {
+        print('Error initializing Google Sign In: $e');
+      }
+    }
   }
 
   // Get current user
@@ -25,72 +43,80 @@ class AuthService {
   // Get current user stream
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  // Google Sign In
+  // Google Sign In - with improved web support
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      final googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        return null;
-      }
+      // For web, use Firebase Auth's signInWithPopup which is more reliable
+      GoogleAuthProvider authProvider = GoogleAuthProvider()
+        ..setCustomParameters({
+          'prompt': 'select_account', // Show account picker
+          'display': 'popup', // Use popup mode
+        });
 
-      final googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final userCredential = await _auth.signInWithCredential(credential);
-
-      // Create or update user document in Firestore
-      if (userCredential.user != null) {
-        final displayName = googleUser.displayName ?? 'User';
-
-        // Update Firebase Auth displayName if not set
-        if (userCredential.user!.displayName == null ||
-            userCredential.user!.displayName!.isEmpty) {
-          try {
-            await userCredential.user!.updateDisplayName(displayName);
-            await userCredential.user!.reload();
-          } catch (e) {
-            print('Error updating displayName in Firebase Auth: $e');
-          }
+      // Try Firebase Auth popup first (more reliable on web)
+      try {
+        final userCredential = await _auth.signInWithPopup(authProvider);
+        await _handleSignInSuccess(userCredential);
+        return userCredential;
+      } catch (e) {
+        // If popup fails, try redirect method
+        print('Popup failed, trying redirect method: $e');
+        if (e.toString().contains('popup_blocked') ||
+            e.toString().contains('popup_closed')) {
+          // Fallback to redirect
+          await _auth.signInWithRedirect(authProvider);
+          return null; // Redirect handles navigation
         }
-
-        final userDoc = await _firestore
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .get();
-
-        if (!userDoc.exists) {
-          // First time login - create new user with role 'user'
-          await _firestore
-              .collection('users')
-              .doc(userCredential.user!.uid)
-              .set({
-            'email': userCredential.user!.email,
-            'displayName': displayName,
-            'photoURL': userCredential.user!.photoURL,
-            'role': 'user', // Default role for new users
-            'lastLogin': FieldValue.serverTimestamp(),
-            'lastActivity': FieldValue.serverTimestamp(),
-            'createdAt': FieldValue.serverTimestamp(),
-          });
-        } else {
-          // Existing user - only update lastLogin and lastActivity, DO NOT touch role
-          await _firestore
-              .collection('users')
-              .doc(userCredential.user!.uid)
-              .update({
-            'lastLogin': FieldValue.serverTimestamp(),
-            'lastActivity': FieldValue.serverTimestamp(),
-          });
-        }
+        rethrow;
       }
-
-      return userCredential;
     } catch (e) {
       print('Error signing in with Google: $e');
       rethrow;
+    }
+  }
+
+  // Handle successful sign in
+  Future<void> _handleSignInSuccess(UserCredential userCredential) async {
+    if (userCredential.user != null) {
+      final displayName = userCredential.user!.displayName ?? 'User';
+
+      // Update Firebase Auth displayName if not set
+      if (userCredential.user!.displayName == null ||
+          userCredential.user!.displayName!.isEmpty) {
+        try {
+          await userCredential.user!.updateDisplayName(displayName);
+          await userCredential.user!.reload();
+        } catch (e) {
+          print('Error updating displayName in Firebase Auth: $e');
+        }
+      }
+
+      final userDoc = await _firestore
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        // First time login - create new user with role 'user'
+        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+          'email': userCredential.user!.email,
+          'displayName': displayName,
+          'photoURL': userCredential.user!.photoURL,
+          'role': 'user', // Default role for new users
+          'lastLogin': FieldValue.serverTimestamp(),
+          'lastActivity': FieldValue.serverTimestamp(),
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      } else {
+        // Existing user - only update lastLogin and lastActivity, DO NOT touch role
+        await _firestore
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .update({
+          'lastLogin': FieldValue.serverTimestamp(),
+          'lastActivity': FieldValue.serverTimestamp(),
+        });
+      }
     }
   }
 
@@ -123,6 +149,7 @@ class AuthService {
       SessionManager().resetSession();
       await _googleSignIn.signOut();
       await _auth.signOut();
+      _isInitialized = false; // Reset initialization flag
     } catch (e) {
       print('Error signing out: $e');
     }
@@ -140,6 +167,7 @@ class AuthService {
     try {
       await _googleSignIn.signOut();
       await _auth.signOut();
+      _isInitialized = false;
     } catch (e) {
       print('Error during session timeout logout: $e');
     }

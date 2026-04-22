@@ -9,6 +9,8 @@ import 'src/features/auth/login_page.dart';
 import 'src/features/admin/admin_page.dart';
 import 'src/services/auth_service.dart';
 import 'src/services/session_manager.dart';
+import 'src/config/responsive_config.dart';
+import 'src/widgets/iphone_device_frame.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,43 +27,11 @@ class PaybiteApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: StreamBuilder(
-        stream: AuthService().authStateChanges,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          if (snapshot.hasData) {
-            // User is logged in
-            final userId = snapshot.data!.uid;
-            // Start session monitoring
-            AuthService().startSessionMonitoring();
-
-            return FutureBuilder<String>(
-              future: AuthService().getUserRole(userId),
-              builder: (context, roleSnapshot) {
-                if (roleSnapshot.connectionState == ConnectionState.waiting) {
-                  return const Scaffold(
-                    body: Center(child: CircularProgressIndicator()),
-                  );
-                }
-
-                if (roleSnapshot.data == 'admin') {
-                  return SessionActivityWrapper(child: AdminPage());
-                } else {
-                  return SessionActivityWrapper(child: UserApp());
-                }
-              },
-            );
-          }
-
-          // User is not logged in
-          return const LoginPage();
-        },
-      ),
+      home: ResponsiveConfig.isWeb()
+          ? IPhoneDeviceFrame(
+              child: _buildHomeContent(),
+            )
+          : _buildHomeContent(),
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/history':
@@ -79,6 +49,46 @@ class PaybiteApp extends StatelessWidget {
           default:
             return null;
         }
+      },
+    );
+  }
+
+  Widget _buildHomeContent() {
+    return StreamBuilder(
+      stream: AuthService().authStateChanges,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasData) {
+          // User is logged in
+          final userId = snapshot.data!.uid;
+          // Start session monitoring
+          AuthService().startSessionMonitoring();
+
+          return FutureBuilder<String>(
+            future: AuthService().getUserRole(userId),
+            builder: (context, roleSnapshot) {
+              if (roleSnapshot.connectionState == ConnectionState.waiting) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (roleSnapshot.data == 'admin') {
+                return SessionActivityWrapper(child: AdminPage());
+              } else {
+                return SessionActivityWrapper(child: UserApp());
+              }
+            },
+          );
+        }
+
+        // User is not logged in
+        return const LoginPage();
       },
     );
   }

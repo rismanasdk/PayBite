@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 import '../../models/product.dart';
 import '../../services/firebase_service.dart';
@@ -233,13 +235,44 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(selectedImage!.path),
-                            width: double.infinity,
-                            height: 150,
-                            fit: BoxFit.cover,
+                        SizedBox(
+                          width: 280,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: kIsWeb
+                                ? FutureBuilder<Uint8List>(
+                                    future: selectedImage!.readAsBytes(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Container(
+                                          height: 150,
+                                          color: Colors.grey[300],
+                                          child: const Center(
+                                              child:
+                                                  CircularProgressIndicator()),
+                                        );
+                                      }
+                                      if (snapshot.hasData) {
+                                        return Image.memory(
+                                          snapshot.data!,
+                                          height: 150,
+                                          fit: BoxFit.cover,
+                                        );
+                                      }
+                                      return Container(
+                                        height: 150,
+                                        color: Colors.grey[300],
+                                        child: const Icon(
+                                            Icons.image_not_supported),
+                                      );
+                                    },
+                                  )
+                                : Image.file(
+                                    File(selectedImage!.path),
+                                    height: 150,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                       ],
@@ -256,39 +289,69 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: !currentImageUrl!.startsWith('http')
-                            ? Image.file(
-                                File(currentImageUrl!),
-                                width: double.infinity,
-                                height: 150,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    width: double.infinity,
-                                    height: 150,
-                                    color: Colors.grey[300],
-                                    child:
-                                        const Icon(Icons.image_not_supported),
-                                  );
-                                },
-                              )
-                            : Image.network(
-                                currentImageUrl!,
-                                width: double.infinity,
-                                height: 150,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    width: double.infinity,
-                                    height: 150,
-                                    color: Colors.grey[300],
-                                    child:
-                                        const Icon(Icons.image_not_supported),
-                                  );
-                                },
-                              ),
+                      SizedBox(
+                        width: 280,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: !currentImageUrl!.startsWith('http')
+                              ? (kIsWeb
+                                  ? FutureBuilder<Uint8List>(
+                                      future:
+                                          File(currentImageUrl!).readAsBytes(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Container(
+                                            height: 150,
+                                            color: Colors.grey[300],
+                                            child: const Center(
+                                                child:
+                                                    CircularProgressIndicator()),
+                                          );
+                                        }
+                                        if (snapshot.hasData) {
+                                          return Image.memory(
+                                            snapshot.data!,
+                                            height: 150,
+                                            fit: BoxFit.cover,
+                                          );
+                                        }
+                                        return Container(
+                                          height: 150,
+                                          color: Colors.grey[300],
+                                          child: const Icon(
+                                              Icons.image_not_supported),
+                                        );
+                                      },
+                                    )
+                                  : Image.file(
+                                      File(currentImageUrl!),
+                                      height: 150,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Container(
+                                          height: 150,
+                                          color: Colors.grey[300],
+                                          child: const Icon(
+                                              Icons.image_not_supported),
+                                        );
+                                      },
+                                    ))
+                              : Image.network(
+                                  currentImageUrl!,
+                                  height: 150,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      height: 150,
+                                      color: Colors.grey[300],
+                                      child:
+                                          const Icon(Icons.image_not_supported),
+                                    );
+                                  },
+                                ),
+                        ),
                       ),
                     ],
                   ),
@@ -347,6 +410,9 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
           return;
         }
 
+        // Close product dialog first
+        Navigator.pop(context);
+
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -369,7 +435,6 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
 
           if (mounted) {
             Navigator.pop(context); // Close loading dialog
-            Navigator.pop(context); // Close product dialog
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Product added successfully')),
             );
@@ -395,6 +460,9 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
       initialStock: product.stock.toString(),
       initialImage: product.image,
       onSave: (name, price, stock, image) async {
+        // Close dialog first
+        Navigator.pop(context);
+
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -423,7 +491,6 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
 
           if (mounted) {
             Navigator.pop(context); // Close loading dialog
-            Navigator.pop(context); // Close edit dialog
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Product updated successfully')),
             );
@@ -453,12 +520,32 @@ class _AdminProductsPageState extends State<AdminProductsPage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              await _firebaseService.deleteProduct(product.id);
-              if (mounted) {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Product deleted successfully')),
-                );
+              Navigator.pop(context); // Close confirmation dialog
+
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+
+              try {
+                await _firebaseService.deleteProduct(product.id);
+                if (mounted) {
+                  Navigator.pop(context); // Close loading dialog
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Product deleted successfully')),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  Navigator.pop(context); // Close loading dialog
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: ${e.toString()}')),
+                  );
+                }
               }
             },
             style: ElevatedButton.styleFrom(

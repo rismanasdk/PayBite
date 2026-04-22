@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -33,10 +34,10 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-          'lib/src/assets/Logo.png',
-          width: 80,
-          height: 80,
-        ),
+                  'lib/src/assets/Logo.png',
+                  width: 80,
+                  height: 80,
+                ),
                 const SizedBox(height: 24),
                 const Text(
                   'PayBite',
@@ -55,44 +56,95 @@ class _LoginPageState extends State<LoginPage> {
                               AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _signInWithGoogle,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'lib/src/assets/logo-google.webp',
-                          width: 45, 
-                          height: 45,
-                        ),
-                        const SizedBox(width: 12),
-                        const Expanded(
-                          child: Text(
-                            'Login with Google',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        const SizedBox(width: 40), // biar text tetap center
-                      ],
-                    ),
-                  ),
-                )
+                    : kIsWeb
+                        ? _buildWebLoginButton()
+                        : _buildMobileLoginButton(),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildMobileLoginButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: ElevatedButton(
+        onPressed: _signInWithGoogle,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+        ),
+        child: Row(
+          children: [
+            Image.asset(
+              'lib/src/assets/logo-google.webp',
+              width: 45,
+              height: 45,
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Login with Google',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            const SizedBox(width: 40),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWebLoginButton() {
+    return Column(
+      children: [
+        SizedBox(
+          width: 350,
+          height: 56,
+          child: ElevatedButton(
+            onPressed: _signInWithGoogle,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'lib/src/assets/logo-google.webp',
+                  width: 40,
+                  height: 40,
+                ),
+                const SizedBox(width: 16),
+                const Text(
+                  'Sign in with Google',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Safe and secure',
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 14,
+          ),
+        ),
+      ],
     );
   }
 
@@ -105,8 +157,7 @@ class _LoginPageState extends State<LoginPage> {
       if (userCredential != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('Welcome, ${userCredential.user?.displayName}'),
+            content: Text('Welcome, ${userCredential.user?.displayName}'),
           ),
         );
         // Navigation handled by StreamBuilder in main

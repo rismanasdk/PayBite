@@ -45,6 +45,7 @@ app.*.map.json
 #Configurations
 lib/firebase_options.dart
 lib/src/config/cloudinary_config.dart
+web/index.html
 
 # Firebase & Google Services (contains sensitive credentials)
 google-services.json
