@@ -179,10 +179,6 @@ This project is licensed under the MIT License - see [LICENSE](./LICENSE) file f
 **Risman Hadinata**
 - GitHub: [@rismanasdk](https://github.com/rismanasdk)
 
-##  Support
-
-For support, email risman@paybite.local or open an issue in the repository.
-
 ##  Roadmap
 
 - [ ] Push notifications for orders
